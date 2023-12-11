@@ -52,13 +52,13 @@ export const AvataxConfigurationForm = (props: AvataxConfigurationFormProps) => 
     (data: AvataxConfig) => {
       props.submit.handleFn(data);
     },
-    [props]
+    [props],
   );
 
   return (
     <AppCard>
       <Box marginBottom={8}>
-        <ProviderLabel name="avatax" />
+        <ProviderLabel name="avataxExcise" />
       </Box>
       <FormProvider {...formMethods}>
         <form onSubmit={handleSubmit(submitHandler)} data-testid="avatax-configuration-form">

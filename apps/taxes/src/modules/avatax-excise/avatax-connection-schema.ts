@@ -16,7 +16,6 @@ const avataxCredentialsSchema = z.object({
 // All that is needed to create AvaTax configuration.
 export const baseAvataxConfigSchema = z.object({
   isSandbox: z.boolean(),
-  useExcise: z.boolean(),
   credentials: avataxCredentialsSchema,
 });
 
@@ -39,7 +38,6 @@ export const defaultAvataxConfig: AvataxConfig = {
   name: "",
   companyCode: "DEFAULT",
   isSandbox: false,
-  useExcise: false,
   isAutocommit: false,
   isDocumentRecordingEnabled: true,
   shippingTaxCode: "",

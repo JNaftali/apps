@@ -42,7 +42,6 @@ export const AvataxConfigurationCredentialsFragment = (
       await props.onValidateCredentials({
         credentials: value.credentials,
         isSandbox: value.isSandbox,
-        useExcise: value.useExcise,
       });
       notifySuccess("Credentials verified");
       setStatus("authenticated");
@@ -117,12 +116,6 @@ export const AvataxConfigurationCredentialsFragment = (
             </HelperText>
           }
           name="isSandbox"
-        />
-        <AppToggle
-          control={control}
-          label="Use Avatax Excise"
-          helperText={<HelperText>Choose whether to use Avatax Excise</HelperText>}
-          name="useExcise"
         />
       </FormSection>
       <Box display="flex" justifyContent={"flex-end"}>

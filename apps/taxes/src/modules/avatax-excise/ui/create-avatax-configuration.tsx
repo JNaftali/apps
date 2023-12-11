@@ -14,7 +14,7 @@ export const CreateAvataxConfiguration = () => {
     trpcClient.providersConfiguration.getAll.useQuery();
 
   const { mutate: createMutation, isLoading: isCreateLoading } =
-    trpcClient.avataxConnection.create.useMutation({
+    trpcClient.avataxExciseConnection.create.useMutation({
       async onSuccess() {
         notifySuccess("Success", "Provider created");
         await refetchProvidersConfigurationData();
@@ -25,30 +25,31 @@ export const CreateAvataxConfiguration = () => {
       },
     });
 
-  const validateAddressMutation = trpcClient.avataxConnection.createValidateAddress.useMutation({});
+  const validateAddressMutation =
+    trpcClient.avataxExciseConnection.createValidateAddress.useMutation({});
 
   const validateAddressHandler = React.useCallback(
     async (config: AvataxConfig) => {
       return validateAddressMutation.mutateAsync({ value: config });
     },
-    [validateAddressMutation]
+    [validateAddressMutation],
   );
 
   const validateCredentialsMutation =
-    trpcClient.avataxConnection.createValidateCredentials.useMutation({});
+    trpcClient.avataxExciseConnection.createValidateCredentials.useMutation({});
 
   const validateCredentialsHandler = React.useCallback(
     async (config: BaseAvataxConfig) => {
       return validateCredentialsMutation.mutateAsync({ value: config });
     },
-    [validateCredentialsMutation]
+    [validateCredentialsMutation],
   );
 
   const submitHandler = React.useCallback(
     (data: AvataxConfig) => {
       createMutation({ value: data });
     },
-    [createMutation]
+    [createMutation],
   );
 
   const submit = React.useMemo(() => {

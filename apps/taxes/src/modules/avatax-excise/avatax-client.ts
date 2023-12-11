@@ -8,47 +8,15 @@ import { LogOptions } from "avatax/lib/utils/logger";
 import packageJson from "../../../package.json";
 import { AvataxClientTaxCodeService } from "./avatax-client-tax-code.service";
 import { BaseAvataxConfig } from "./avatax-connection-schema";
+import { createLogger } from "@saleor/apps-shared";
 
 type AvataxSettings = {
   appName: string;
   appVersion: string;
-  environment:
-    | "sandbox"
-    | "production"
-    | "https://excisesbx.avalara.com"
-    | "https://excise.avalara.com";
+  environment: "sandbox" | "production";
   machineName: string;
   timeout: number;
   logOptions?: LogOptions;
-};
-
-const defaultAvataxSettings: AvataxSettings = {
-  appName: packageJson.name,
-  appVersion: packageJson.version,
-  environment: "sandbox",
-  machineName: "tax-app",
-  timeout: 5000,
-};
-
-const createAvataxSettings = ({
-  isSandbox,
-  useExcise,
-}: {
-  isSandbox: boolean;
-  useExcise: boolean;
-}): AvataxSettings => {
-  const settings: AvataxSettings = {
-    ...defaultAvataxSettings,
-    environment: useExcise
-      ? isSandbox
-        ? "https://excisesbx.avalara.com"
-        : "https://excise.avalara.com"
-      : isSandbox
-      ? "sandbox"
-      : "production",
-  };
-
-  return settings;
 };
 
 export type CommitTransactionArgs = {
@@ -71,17 +39,31 @@ export type VoidTransactionArgs = {
   companyCode: string;
 };
 
-export class AvataxClient {
-  private client: Avatax;
+export class AvataxExciseClient {
+  private logger = createLogger({ name: "AvataxExciseClient" });
+  private baseUrl: string;
+  private credentials: BaseAvataxConfig["credentials"];
 
   constructor(baseConfig: BaseAvataxConfig) {
-    const settings = createAvataxSettings({
-      isSandbox: baseConfig.isSandbox,
-      useExcise: baseConfig.useExcise,
-    });
-    const avataxClient = new Avatax(settings).withSecurity(baseConfig.credentials);
+    if (baseConfig.isSandbox) {
+      this.baseUrl = "https://excisesbx.avalara.com";
+    } else {
+      this.baseUrl = "https://excise.avalara.com";
+    }
+    this.credentials = baseConfig.credentials;
+  }
 
-    this.client = avataxClient;
+  private callEndpoint(endpoint: string, init?: RequestInit) {
+    const url = new URL(`/api/v1/${endpoint}`, this.baseUrl);
+    const headers = new Headers(init?.headers);
+
+    headers.set(
+      "Authorization",
+      "Basic " +
+        Buffer.from(this.credentials.username + ":" + this.credentials.password).toString("base64"),
+    );
+
+    return fetch(url, { ...init, headers }).then((r) => r.json());
   }
 
   async createTransaction({ model }: CreateTransactionArgs) {
@@ -122,7 +104,7 @@ export class AvataxClient {
   }
 
   async ping() {
-    return this.client.ping();
+    return this.callEndpoint("Utilities/Ping");
   }
 
   async getEntityUseCode(useCode: string) {

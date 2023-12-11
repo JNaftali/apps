@@ -2,7 +2,7 @@ import { z } from "zod";
 import { createLogger } from "../../lib/logger";
 import { protectedClientProcedure } from "../trpc/protected-client-procedure";
 import { router } from "../trpc/trpc-server";
-import { AvataxClient } from "./avatax-client";
+import { AvataxExciseClient } from "./avatax-client";
 import { avataxConfigSchema, baseAvataxConfigSchema } from "./avatax-connection-schema";
 import { AvataxAddressValidationService } from "./configuration/avatax-address-validation.service";
 import { AvataxAuthValidationService } from "./configuration/avatax-auth-validation.service";
@@ -36,7 +36,7 @@ const protectedWithConnectionService = protectedClientProcedure.use(({ next, ctx
         saleorApiUrl: ctx.saleorApiUrl,
       }),
     },
-  })
+  }),
 );
 
 export const avataxConnectionRouter = router({
@@ -151,7 +151,7 @@ export const avataxConnectionRouter = router({
 
       logger.debug("Route called");
 
-      const avataxClient = new AvataxClient(input.value);
+      const avataxClient = new AvataxExciseClient(input.value);
 
       const addressValidation = new AvataxAddressValidationService(avataxClient);
 
@@ -194,7 +194,7 @@ export const avataxConnectionRouter = router({
         procedure: "avataxConnectionRouter.createValidateAuth",
       });
 
-      const avataxClient = new AvataxClient(input.value);
+      const avataxClient = new AvataxExciseClient(input.value);
 
       const authValidation = new AvataxAuthValidationService(avataxClient);
 
