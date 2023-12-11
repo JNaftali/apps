@@ -44,6 +44,14 @@ const providerConfig = {
       </p>
     ),
   },
+  avataxExcise: {
+    description: (
+      <p>
+        AvaTax Excise is a comprehensive tax automation software service that helps businesses
+        calculate and manage sales tax accurately and efficiently.
+      </p>
+    ),
+  },
   stripeTax: {
     isComingSoon: true,
     description: (

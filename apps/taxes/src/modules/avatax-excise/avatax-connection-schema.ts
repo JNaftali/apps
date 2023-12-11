@@ -58,7 +58,7 @@ export const defaultAvataxConfig: AvataxConfig = {
 
 export const avataxConnectionSchema = z.object({
   id: z.string(),
-  provider: z.literal("avatax"),
+  provider: z.literal("avataxExcise"),
   config: avataxConfigSchema,
 });
 

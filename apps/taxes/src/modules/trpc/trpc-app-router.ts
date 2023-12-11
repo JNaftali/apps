@@ -1,4 +1,5 @@
 import { avataxConnectionRouter } from "../avatax/avatax-connection.router";
+import { avataxConnectionRouter as avataxExciseConnectionRouter } from "../avatax-excise/avatax-connection.router";
 import { avataxTaxCodeMatchesRouter } from "../avatax/tax-code/avatax-tax-code-matches.router";
 import { avataxTaxCodesRouter } from "../avatax/tax-code/avatax-tax-codes.router";
 import { channelsConfigurationRouter } from "../channel-configuration/channel-configuration.router";
@@ -19,6 +20,7 @@ export const appRouter = router({
   channelsConfiguration: channelsConfigurationRouter,
   taxJarConnection: taxjarConnectionRouter,
   avataxConnection: avataxConnectionRouter,
+  avataxExciseConnection: avataxExciseConnectionRouter,
   taxClasses: taxClassesRouter,
   avataxTaxCodes: avataxTaxCodesRouter,
   taxJarTaxCodes: taxJarTaxCodesRouter,
