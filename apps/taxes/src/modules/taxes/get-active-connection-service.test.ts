@@ -25,6 +25,7 @@ const mockedProviders: ProviderConnections = [
       companyCode: "DEFAULT",
       isAutocommit: false,
       isSandbox: true,
+      useExcise: false,
       name: "avatax-1",
       shippingTaxCode: "FR000000",
       credentials: {
@@ -83,7 +84,7 @@ const mockedValidChannels: ChannelsConfig = [
 
 const mockedInvalidEncryptedChannels = encrypt(
   JSON.stringify(mockedChannelsWithInvalidproviderConnectionId),
-  mockedSecretKey
+  mockedSecretKey,
 );
 
 const mockedValidEncryptedChannels = encrypt(JSON.stringify(mockedValidChannels), mockedSecretKey);
@@ -99,13 +100,13 @@ vi.stubEnv("SECRET_KEY", mockedSecretKey);
 describe("getActiveConnectionService", () => {
   it("throws error when channel slug is missing", () => {
     expect(() => getActiveConnectionService("", mockedInvalidMetadata, mockedAuthData)).toThrow(
-      "Channel slug was not found in the webhook payload"
+      "Channel slug was not found in the webhook payload",
     );
   });
 
   it("throws error when there are no metadata items", () => {
     expect(() => getActiveConnectionService("default-channel", [], mockedAuthData)).toThrow(
-      "App encryptedMetadata was not found in the webhook payload"
+      "App encryptedMetadata was not found in the webhook payload",
     );
   });
 
@@ -123,8 +124,8 @@ describe("getActiveConnectionService", () => {
             value: mockedInvalidEncryptedChannels,
           },
         ],
-        mockedAuthData
-      )
+        mockedAuthData,
+      ),
     ).toThrow("Channel config providerConnectionId does not match any providers");
   });
 
@@ -142,8 +143,8 @@ describe("getActiveConnectionService", () => {
             value: mockedValidEncryptedChannels,
           },
         ],
-        mockedAuthData
-      )
+        mockedAuthData,
+      ),
     ).toThrow("Channel config was not found for channel invalid-channel");
   });
 
@@ -160,7 +161,7 @@ describe("getActiveConnectionService", () => {
           value: mockedValidEncryptedChannels,
         },
       ],
-      mockedAuthData
+      mockedAuthData,
     );
 
     expect(result).toBeDefined();
