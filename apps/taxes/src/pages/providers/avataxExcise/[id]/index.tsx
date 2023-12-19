@@ -25,11 +25,11 @@ const EditAvataxPage = () => {
           label: "Providers",
         },
         {
-          href: "/providers/avatax",
-          label: "AvaTax",
+          href: "/providers/avataxExcise",
+          label: "AvaTax Excise",
         },
         {
-          href: `/providers/avatax/${id}`,
+          href: `/providers/avataxExcise/${id}`,
           label: String(id),
         },
       ]}

@@ -2,10 +2,10 @@ import { DeepPartial } from "@trpc/server";
 import { Client } from "urql";
 import { AvataxConfig } from "../avatax-connection-schema";
 import { AvataxObfuscator } from "../avatax-obfuscator";
-import { AvataxConnectionService } from "./avatax-connection.service";
+import { AvataxExciseConnectionService } from "./avatax-connection.service";
 
-export class PublicAvataxConnectionService {
-  private readonly connectionService: AvataxConnectionService;
+export class PublicAvataxExciseConnectionService {
+  private readonly connectionService: AvataxExciseConnectionService;
   private readonly obfuscator: AvataxObfuscator;
   constructor({
     client,
@@ -16,7 +16,7 @@ export class PublicAvataxConnectionService {
     appId: string;
     saleorApiUrl: string;
   }) {
-    this.connectionService = new AvataxConnectionService({ client, appId, saleorApiUrl });
+    this.connectionService = new AvataxExciseConnectionService({ client, appId, saleorApiUrl });
     this.obfuscator = new AvataxObfuscator();
   }
 

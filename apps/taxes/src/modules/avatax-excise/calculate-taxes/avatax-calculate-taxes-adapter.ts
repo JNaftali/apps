@@ -4,7 +4,7 @@ import { CalculateTaxesPayload } from "../../../pages/api/webhooks/checkout-calc
 import { ClientLogger } from "../../logs/client-logger";
 import { CalculateTaxesResponse } from "../../taxes/tax-provider-webhook";
 import { WebhookAdapter } from "../../taxes/tax-webhook-adapter";
-import { AvataxClient, CreateTransactionArgs } from "../avatax-client";
+import { AvataxExciseClient, CreateTransactionArgs } from "../avatax-client";
 import { AvataxConfig } from "../avatax-connection-schema";
 import { normalizeAvaTaxError } from "../avatax-error-normalizer";
 import { AvataxCalculateTaxesPayloadService } from "./avatax-calculate-taxes-payload.service";
@@ -40,12 +40,12 @@ export class AvataxCalculateTaxesAdapter
 
   async send(payload: CalculateTaxesPayload): Promise<AvataxCalculateTaxesResponse> {
     this.logger.debug("Transforming the Saleor payload for calculating taxes with AvaTax...");
-    const payloadService = new AvataxCalculateTaxesPayloadService(this.authData);
+    const payloadService = new AvataxCalculateTaxesPayloadService();
     const target = await payloadService.getPayload(payload, this.config);
 
     this.logger.debug("Calling AvaTax createTransaction with transformed payload...");
 
-    const client = new AvataxClient(this.config);
+    const client = new AvataxExciseClient(this.config);
 
     try {
       const response = await client.createTransaction(target);

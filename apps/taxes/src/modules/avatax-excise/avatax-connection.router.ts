@@ -4,11 +4,9 @@ import { protectedClientProcedure } from "../trpc/protected-client-procedure";
 import { router } from "../trpc/trpc-server";
 import { AvataxExciseClient } from "./avatax-client";
 import { avataxConfigSchema, baseAvataxConfigSchema } from "./avatax-connection-schema";
-import { AvataxAddressValidationService } from "./configuration/avatax-address-validation.service";
 import { AvataxAuthValidationService } from "./configuration/avatax-auth-validation.service";
-import { AvataxEditAddressValidationService } from "./configuration/avatax-edit-address-validation.service";
 import { AvataxEditAuthValidationService } from "./configuration/avatax-edit-auth-validation.service";
-import { PublicAvataxConnectionService } from "./configuration/public-avatax-connection.service";
+import { PublicAvataxExciseConnectionService } from "./configuration/public-avatax-connection.service";
 
 const getInputSchema = z.object({
   id: z.string(),
@@ -30,7 +28,7 @@ const postInputSchema = z.object({
 const protectedWithConnectionService = protectedClientProcedure.use(({ next, ctx }) =>
   next({
     ctx: {
-      connectionService: new PublicAvataxConnectionService({
+      connectionService: new PublicAvataxExciseConnectionService({
         appId: ctx.appId!,
         client: ctx.apiClient,
         saleorApiUrl: ctx.saleorApiUrl,
@@ -109,55 +107,6 @@ export const avataxConnectionRouter = router({
       const result = await ctx.connectionService.update(input.id, input.value);
 
       logger.info(`AvaTax configuration with an id: ${input.id} was successfully updated`);
-
-      return result;
-    }),
-  /*
-   * There are separate methods for address validation for edit and create
-   * because some form values in the edit form can be obfuscated.
-   * When calling the "editValidateAddress", we are checking if the credentials
-   * are obfuscated. If they are, we use the stored credentials and mix them with
-   * unobfuscated values from the form.
-   */
-  editValidateAddress: protectedClientProcedure
-    .input(z.object({ value: avataxConfigSchema, id: z.string() }))
-    .mutation(async ({ ctx, input }) => {
-      const logger = createLogger({
-        saleorApiUrl: ctx.saleorApiUrl,
-        procedure: "avataxConnectionRouter.editValidateAddress",
-      });
-
-      logger.debug("Route called");
-
-      const addressValidationService = new AvataxEditAddressValidationService({
-        appId: ctx.appId!,
-        client: ctx.apiClient,
-        saleorApiUrl: ctx.saleorApiUrl,
-      });
-
-      const result = await addressValidationService.validate(input.id, input.value);
-
-      logger.info(`AvaTax address was successfully validated`);
-
-      return result;
-    }),
-  createValidateAddress: protectedWithConnectionService
-    .input(postInputSchema)
-    .mutation(async ({ ctx, input }) => {
-      const logger = createLogger({
-        saleorApiUrl: ctx.saleorApiUrl,
-        procedure: "avataxConnectionRouter.createValidateAddress",
-      });
-
-      logger.debug("Route called");
-
-      const avataxClient = new AvataxExciseClient(input.value);
-
-      const addressValidation = new AvataxAddressValidationService(avataxClient);
-
-      const result = await addressValidation.validate(input.value.address);
-
-      logger.info(`AvaTax address was successfully validated`);
 
       return result;
     }),

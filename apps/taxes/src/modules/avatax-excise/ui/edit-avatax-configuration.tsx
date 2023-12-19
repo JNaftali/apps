@@ -61,7 +61,7 @@ export const EditAvataxConfiguration = () => {
     },
     {
       enabled: !!configurationId,
-    }
+    },
   );
 
   const submitHandler = React.useCallback(
@@ -72,7 +72,7 @@ export const EditAvataxConfiguration = () => {
         id: configurationId,
       });
     },
-    [configurationId, patchMutation]
+    [configurationId, patchMutation],
   );
 
   const deleteHandler = () => {
@@ -84,15 +84,6 @@ export const EditAvataxConfiguration = () => {
     // }
   };
 
-  const validateAddressMutation = trpcClient.avataxConnection.editValidateAddress.useMutation({});
-
-  const validateAddressHandler = React.useCallback(
-    async (config: AvataxConfig) => {
-      return validateAddressMutation.mutateAsync({ id: configurationId, value: config });
-    },
-    [configurationId, validateAddressMutation]
-  );
-
   const validateCredentialsMutation =
     trpcClient.avataxConnection.editValidateCredentials.useMutation({});
 
@@ -100,7 +91,7 @@ export const EditAvataxConfiguration = () => {
     async (config: BaseAvataxConfig) => {
       return validateCredentialsMutation.mutateAsync({ id: configurationId, value: config });
     },
-    [configurationId, validateCredentialsMutation]
+    [configurationId, validateCredentialsMutation],
   );
 
   const submit = React.useMemo(() => {
@@ -109,13 +100,6 @@ export const EditAvataxConfiguration = () => {
       handleFn: submitHandler,
     };
   }, [isPatchLoading, submitHandler]);
-
-  const validateAddress = React.useMemo(() => {
-    return {
-      isLoading: validateAddressMutation.isLoading,
-      handleFn: validateAddressHandler,
-    };
-  }, [validateAddressHandler, validateAddressMutation]);
 
   const validateCredentials = React.useMemo(() => {
     return {
@@ -144,7 +128,6 @@ export const EditAvataxConfiguration = () => {
   return (
     <AvataxConfigurationForm
       submit={submit}
-      validateAddress={validateAddress}
       validateCredentials={validateCredentials}
       defaultValues={data.config}
       leftButton={

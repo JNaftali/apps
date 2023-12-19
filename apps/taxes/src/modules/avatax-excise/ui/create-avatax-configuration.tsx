@@ -25,16 +25,6 @@ export const CreateAvataxConfiguration = () => {
       },
     });
 
-  const validateAddressMutation =
-    trpcClient.avataxExciseConnection.createValidateAddress.useMutation({});
-
-  const validateAddressHandler = React.useCallback(
-    async (config: AvataxConfig) => {
-      return validateAddressMutation.mutateAsync({ value: config });
-    },
-    [validateAddressMutation],
-  );
-
   const validateCredentialsMutation =
     trpcClient.avataxExciseConnection.createValidateCredentials.useMutation({});
 
@@ -59,13 +49,6 @@ export const CreateAvataxConfiguration = () => {
     };
   }, [isCreateLoading, submitHandler]);
 
-  const validateAddress = React.useMemo(() => {
-    return {
-      isLoading: validateAddressMutation.isLoading,
-      handleFn: validateAddressHandler,
-    };
-  }, [validateAddressHandler, validateAddressMutation]);
-
   const validateCredentials = React.useMemo(() => {
     return {
       isLoading: validateCredentialsMutation.isLoading,
@@ -76,7 +59,6 @@ export const CreateAvataxConfiguration = () => {
   return (
     <AvataxConfigurationForm
       submit={submit}
-      validateAddress={validateAddress}
       validateCredentials={validateCredentials}
       defaultValues={defaultAvataxConfig}
       leftButton={

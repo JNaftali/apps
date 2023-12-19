@@ -6,6 +6,7 @@ import { CalculateTaxesPayload } from "../../pages/api/webhooks/checkout-calcula
 import { OrderCancelledPayload } from "../../pages/api/webhooks/order-cancelled";
 import { getAppConfig } from "../app/get-app-config";
 import { AvataxWebhookService } from "../avatax/avatax-webhook.service";
+import { AvataxExciseWebhookService } from "../avatax-excise/avatax-webhook.service";
 import { ProviderConnection } from "../provider-connections/provider-connections";
 import { TaxJarWebhookService } from "../taxjar/taxjar-webhook.service";
 import { ProviderWebhookService } from "./tax-provider-webhook";
@@ -15,7 +16,7 @@ import { ExpectedError } from "../../error";
 // todo: refactor to a factory
 class ActiveTaxProviderService implements ProviderWebhookService {
   private logger: Logger;
-  private client: TaxJarWebhookService | AvataxWebhookService;
+  private client: TaxJarWebhookService | AvataxWebhookService | AvataxExciseWebhookService;
 
   constructor(
     providerConnection: ProviderConnection,
@@ -45,6 +46,16 @@ class ActiveTaxProviderService implements ProviderWebhookService {
       case "avatax": {
         this.logger.debug("Selecting AvaTax as tax provider");
         this.client = new AvataxWebhookService({
+          config: providerConnection.config,
+          authData: this.authData,
+          clientLogger,
+        });
+        break;
+      }
+
+      case "avataxExcise": {
+        this.logger.debug("Selecting AvaTax Excise as tax provider");
+        this.client = new AvataxExciseWebhookService({
           config: providerConnection.config,
           authData: this.authData,
           clientLogger,

@@ -2,7 +2,7 @@ import { Client } from "urql";
 import { Logger, createLogger } from "../../../lib/logger";
 import { Obfuscator } from "../../../lib/obfuscator";
 import { AvataxConfig } from "../avatax-connection-schema";
-import { AvataxConnectionService } from "./avatax-connection.service";
+import { AvataxExciseConnectionService } from "./avatax-connection.service";
 
 /*
  * This class is used to merge the given input with the existing configuration.
@@ -10,7 +10,7 @@ import { AvataxConnectionService } from "./avatax-connection.service";
  */
 export class AvataxPatchInputTransformer {
   private logger: Logger;
-  private connection: AvataxConnectionService;
+  private connection: AvataxExciseConnectionService;
   private obfuscator: Obfuscator;
 
   constructor({
@@ -25,7 +25,7 @@ export class AvataxPatchInputTransformer {
     this.logger = createLogger({
       name: "AvataxPatchInputTransformer",
     });
-    this.connection = new AvataxConnectionService({ client, appId, saleorApiUrl });
+    this.connection = new AvataxExciseConnectionService({ client, appId, saleorApiUrl });
     this.obfuscator = new Obfuscator();
   }
 

@@ -23,24 +23,20 @@ export const avataxConfigMock = mockGenerator.generateAvataxConfig();
 
 describe("AvataxOrderConfirmedPayloadTransformer", () => {
   it("returns document type of SalesInvoice when isDocumentRecordingEnabled is true", async () => {
-    const payload = await transformer.transform(orderMock, avataxConfigMock, []);
+    const payload = await transformer.transform(orderMock, avataxConfigMock);
 
     expect(payload.model.type).toBe(DocumentType.SalesInvoice);
   }),
     it("returns document type of SalesOrder when isDocumentRecordingEnabled is false", async () => {
-      const payload = await transformer.transform(
-        orderMock,
-        {
-          ...avataxConfigMock,
-          isDocumentRecordingEnabled: false,
-        },
-        []
-      );
+      const payload = await transformer.transform(orderMock, {
+        ...avataxConfigMock,
+        isDocumentRecordingEnabled: false,
+      });
 
       expect(payload.model.type).toBe(DocumentType.SalesOrder);
     });
   it("returns lines with discounted: true when there are discounts", async () => {
-    const payload = await transformer.transform(discountedOrderMock, avataxConfigMock, []);
+    const payload = await transformer.transform(discountedOrderMock, avataxConfigMock);
 
     const linesWithoutShipping = payload.model.lines.slice(0, -1);
     const check = linesWithoutShipping.every((line) => line.discounted === true);
@@ -49,7 +45,7 @@ describe("AvataxOrderConfirmedPayloadTransformer", () => {
   });
   it("returns lines with discounted: false when there are no discounts", async () => {
     const transformer = new AvataxOrderConfirmedPayloadTransformer();
-    const payload = await transformer.transform(orderMock, avataxConfigMock, []);
+    const payload = await transformer.transform(orderMock, avataxConfigMock);
 
     const linesWithoutShipping = payload.model.lines.slice(0, -1);
     const check = linesWithoutShipping.every((line) => line.discounted === false);

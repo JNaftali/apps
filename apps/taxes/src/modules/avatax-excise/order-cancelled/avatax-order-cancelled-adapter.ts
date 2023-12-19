@@ -2,7 +2,7 @@ import { Logger, createLogger } from "../../../lib/logger";
 import { OrderCancelledPayload } from "../../../pages/api/webhooks/order-cancelled";
 import { ClientLogger } from "../../logs/client-logger";
 import { WebhookAdapter } from "../../taxes/tax-webhook-adapter";
-import { AvataxClient, VoidTransactionArgs } from "../avatax-client";
+import { AvataxExciseClient, VoidTransactionArgs } from "../avatax-client";
 import { AvataxConfig } from "../avatax-connection-schema";
 import { normalizeAvaTaxError } from "../avatax-error-normalizer";
 import { AvataxOrderCancelledPayloadTransformer } from "./avatax-order-cancelled-payload-transformer";
@@ -28,7 +28,7 @@ export class AvataxOrderCancelledAdapter implements WebhookAdapter<OrderCancelle
 
     this.logger.debug("Calling AvaTax voidTransaction with transformed payload...");
 
-    const client = new AvataxClient(this.config);
+    const client = new AvataxExciseClient(this.config);
 
     try {
       await client.voidTransaction(target);

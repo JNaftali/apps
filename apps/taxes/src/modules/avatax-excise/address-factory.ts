@@ -13,17 +13,6 @@ function mapSaleorAddressToAvataxAddress(address: AddressFragment): AvataxAddres
   };
 }
 
-function mapChannelAddressToAvataxAddress(address: AvataxConfig["address"]): AvataxAddress {
-  return {
-    line1: address.street,
-    city: address.city,
-    region: address.state,
-    postalCode: address.zip,
-    country: address.country,
-  };
-}
-
 export const avataxAddressFactory = {
   fromSaleorAddress: mapSaleorAddressToAvataxAddress,
-  fromChannelAddress: mapChannelAddressToAvataxAddress,
 };

@@ -23,15 +23,15 @@ const LogsAvataxPage = () => {
           label: "Providers",
         },
         {
-          href: "/providers/avatax",
-          label: "AvaTax",
+          href: "/providers/avataxExcise",
+          label: "AvaTaxExcise",
         },
         {
-          href: `/providers/avatax/${id}`,
+          href: `/providers/avataxExcise/${id}`,
           label: String(id),
         },
         {
-          href: `/providers/avatax/${id}/logs`,
+          href: `/providers/avataxExcise/${id}/logs`,
           label: "Logs",
         },
       ]}

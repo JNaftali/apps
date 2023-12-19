@@ -29,29 +29,6 @@ export const AvataxInstructions = () => {
             You must verify the credentials by clicking the <Text variant="bodyStrong">Verify</Text>{" "}
             button.
           </Text>
-          <Text as="p">
-            <i>Address</i> will fail if:
-          </Text>
-          <Box as="ol" marginTop={1} marginBottom={2} marginX={1}>
-            <li>
-              <Text>
-                - The address does not match{" "}
-                <TextLink href="https://developer.avalara.com/avatax/address-validation/" newTab>
-                  the desired format
-                </TextLink>
-                .
-              </Text>
-            </li>
-          </Box>
-          <Text as="p" marginBottom={4}>
-            You must verify the address by clicking the <Text variant="bodyStrong">Verify</Text>{" "}
-            button.
-          </Text>
-          <Text as="p" marginBottom={4}>
-            Verifying the Address will display suggestions that reflect the resolution of the
-            address by AvaTax address validation service. Applying the suggestions is not required
-            but recommended. If the address is not valid, the calculation of taxes will fail.
-          </Text>
         </>
       }
     />

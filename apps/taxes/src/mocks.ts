@@ -13,6 +13,21 @@ export const defaultOrder: OrderConfirmedSubscriptionFragment = {
   channel: {
     id: "Q2hhbm5lbDox",
     slug: "default-channel",
+    warehouses: [
+      {
+        address: {
+          isDefaultShippingAddress: true,
+          streetAddress1: "668 Route Six",
+          streetAddress2: "",
+          city: "MAHOPAC",
+          countryArea: "NY",
+          postalCode: "10541",
+          country: {
+            code: "US",
+          },
+        },
+      },
+    ],
   },
   shippingAddress: {
     streetAddress1: "600 Montgomery St",

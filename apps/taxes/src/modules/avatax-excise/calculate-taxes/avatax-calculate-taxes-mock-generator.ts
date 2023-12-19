@@ -13,7 +13,6 @@ import { BoundaryLevel } from "avatax/lib/enums/BoundaryLevel";
 import { AvataxConfig } from "../avatax-connection-schema";
 import { AvataxConfigMockGenerator } from "../avatax-config-mock-generator";
 import { ChannelConfigMockGenerator } from "../../channel-configuration/channel-config-mock-generator";
-import { AvataxTaxCodeMatches } from "../tax-code/avatax-tax-code-match-repository";
 
 type TaxBase = TaxBaseFragment;
 
@@ -22,6 +21,21 @@ const defaultTaxBase: TaxBase = {
   currency: "USD",
   channel: {
     slug: "default-channel",
+    warehouses: [
+      {
+        address: {
+          isDefaultShippingAddress: true,
+          streetAddress1: "668 Route Six",
+          streetAddress2: "",
+          city: "MAHOPAC",
+          countryArea: "NY",
+          postalCode: "10541",
+          country: {
+            code: "US",
+          },
+        },
+      },
+    ],
   },
   discounts: [],
   address: {
@@ -936,21 +950,10 @@ const defaultTransactionModel: TransactionModel = {
   ],
 };
 
-const defaultTaxCodeMatches: AvataxTaxCodeMatches = [
-  {
-    data: {
-      avataxTaxCode: "P0000000",
-      saleorTaxClassId: "VGF4Q2xhc3M6MjI=",
-    },
-    id: "VGF4Q29kZTox",
-  },
-];
-
 const testingScenariosMap = {
   default: {
     taxBase: defaultTaxBase,
     response: defaultTransactionModel,
-    matches: defaultTaxCodeMatches,
   },
 };
 
@@ -981,7 +984,4 @@ export class AvataxCalculateTaxesMockGenerator {
       ...testingScenariosMap[this.scenario].response,
       ...overrides,
     });
-
-  generateTaxCodeMatches = (overrides: AvataxTaxCodeMatches = []): AvataxTaxCodeMatches =>
-    structuredClone([...testingScenariosMap[this.scenario].matches, ...overrides]);
 }

@@ -7,13 +7,6 @@ const defaultAvataxConfig: AvataxConfig = {
   name: "Avatax-1",
   shippingTaxCode: "FR000000",
   isDocumentRecordingEnabled: true,
-  address: {
-    country: "US",
-    zip: "95008",
-    state: "CA",
-    city: "Campbell",
-    street: "33 N. First Street",
-  },
   credentials: {
     password: "password",
     username: "username",

@@ -10,6 +10,7 @@ const MatcherTable = () => {
   const { data: connections = [], isLoading } = trpcClient.providersConfiguration.getAll.useQuery();
 
   const isAvatax = connections.some(({ provider }) => provider === "avatax");
+  const isAvataxExcise = connections.some(({ provider }) => provider === "avataxExcise");
   const isTaxJar = connections.some(({ provider }) => provider === "taxjar");
   const isConfigured = isAvatax || isTaxJar;
 
@@ -41,6 +42,24 @@ const MatcherTable = () => {
                         <Button
                           data-testid="avatax-matcher-configure-button"
                           onClick={() => router.push("/providers/avatax/matcher")}
+                          variant="tertiary"
+                        >
+                          Configure
+                        </Button>{" "}
+                      </Box>{" "}
+                    </Table.TD>
+                  </Table.TR>
+                )}
+                {isAvataxExcise && (
+                  <Table.TR>
+                    <Table.TD>
+                      <ProviderLabel name="avataxExcise" />
+                    </Table.TD>
+                    <Table.TD>
+                      <Box display="flex" justifyContent={"flex-end"}>
+                        <Button
+                          data-testid="avatax-matcher-configure-button"
+                          onClick={() => router.push("/providers/avataxExcise/matcher")}
                           variant="tertiary"
                         >
                           Configure

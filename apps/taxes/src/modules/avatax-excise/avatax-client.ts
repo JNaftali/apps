@@ -1,23 +1,11 @@
-import Avatax from "avatax";
 import { DocumentType } from "avatax/lib/enums/DocumentType";
 import { VoidReasonCode } from "avatax/lib/enums/VoidReasonCode";
 import { AddressLocationInfo as AvataxAddress } from "avatax/lib/models/AddressLocationInfo";
 import { CommitTransactionModel } from "avatax/lib/models/CommitTransactionModel";
 import { CreateTransactionModel } from "avatax/lib/models/CreateTransactionModel";
-import { LogOptions } from "avatax/lib/utils/logger";
-import packageJson from "../../../package.json";
-import { AvataxClientTaxCodeService } from "./avatax-client-tax-code.service";
 import { BaseAvataxConfig } from "./avatax-connection-schema";
 import { createLogger } from "@saleor/apps-shared";
-
-type AvataxSettings = {
-  appName: string;
-  appVersion: string;
-  environment: "sandbox" | "production";
-  machineName: string;
-  timeout: number;
-  logOptions?: LogOptions;
-};
+import invariant from "tiny-invariant";
 
 export type CommitTransactionArgs = {
   companyCode: string;
@@ -44,26 +32,36 @@ export class AvataxExciseClient {
   private baseUrl: string;
   private credentials: BaseAvataxConfig["credentials"];
 
-  constructor(baseConfig: BaseAvataxConfig) {
-    if (baseConfig.isSandbox) {
+  constructor(config: BaseAvataxConfig) {
+    if (config.isSandbox) {
       this.baseUrl = "https://excisesbx.avalara.com";
     } else {
       this.baseUrl = "https://excise.avalara.com";
     }
-    this.credentials = baseConfig.credentials;
+    this.credentials = config.credentials;
   }
 
-  private callEndpoint(endpoint: string, init?: RequestInit) {
-    const url = new URL(`/api/v1/${endpoint}`, this.baseUrl);
-    const headers = new Headers(init?.headers);
-
-    headers.set(
-      "Authorization",
-      "Basic " +
+  private callEndpoint(endpoint: string, init?: RequestInit, payload?: {} | null | undefined) {
+    const url = new URL(`/api/v1/AvaTaxExcise/${endpoint}`, this.baseUrl);
+    const headers = mergeHeaders(init?.headers ?? [], {
+      Accept: "application/json",
+      Authorization:
+        "Basic " +
         Buffer.from(this.credentials.username + ":" + this.credentials.password).toString("base64"),
-    );
+      "Content-Type": "Application/JSON",
+      "X-Avalara-Client": "Saleor Excise App",
+    });
 
-    return fetch(url, { ...init, headers }).then((r) => r.json());
+    return fetch(url, {
+      ...init,
+      headers,
+      body: payload ? JSON.stringify(payload) : undefined,
+    }).then((r) => r.json());
+  }
+
+  getHeaders(context: { companyCode?: string }): HeadersInit {
+    invariant(context.companyCode, "companyCode is required");
+    return [["x-company-id", context.companyCode]];
   }
 
   async createTransaction({ model }: CreateTransactionArgs) {
@@ -72,11 +70,22 @@ export class AvataxExciseClient {
      * we must guarantee a way of idempotent update of the transaction due to the
      * migration requirements. The transaction can be created in the old flow, but committed in the new flow.
      */
-    return this.client.createOrAdjustTransaction({ model: { createTransactionModel: model } });
+
+    return this.callEndpoint(
+      "transactions/createoradjust",
+      {
+        method: "POST",
+        headers: this.getHeaders(model),
+      },
+      model,
+    );
   }
 
   async commitTransaction(args: CommitTransactionArgs) {
-    return this.client.commitTransaction(args);
+    return this.callEndpoint(`transactions/${args.transactionCode}/commit`, {
+      method: "POST",
+      headers: this.getHeaders(args),
+    });
   }
 
   async voidTransaction({
@@ -86,31 +95,28 @@ export class AvataxExciseClient {
     transactionCode: string;
     companyCode: string;
   }) {
-    return this.client.voidTransaction({
-      transactionCode,
-      companyCode,
-      model: { code: VoidReasonCode.DocVoided },
-    });
-  }
-
-  async validateAddress({ address }: ValidateAddressArgs) {
-    return this.client.resolveAddress(address);
-  }
-
-  async getTaxCodes() {
-    const taxCodeService = new AvataxClientTaxCodeService(this.client);
-
-    return taxCodeService.getTaxCodes();
+    return this.callEndpoint(
+      `transactions/${transactionCode}/void`,
+      {
+        method: "POST",
+        headers: this.getHeaders({ companyCode }),
+      },
+      { model: { code: VoidReasonCode.DocVoided } },
+    );
   }
 
   async ping() {
     return this.callEndpoint("Utilities/Ping");
   }
+}
 
-  async getEntityUseCode(useCode: string) {
-    return this.client.listEntityUseCodes({
-      // https://developer.avalara.com/avatax/filtering-in-rest/
-      filter: `code eq ${useCode}`,
+function mergeHeaders(...headers: Array<HeadersInit>) {
+  const result = new Headers();
+
+  for (let hinit of headers) {
+    new Headers(hinit).forEach((value, key) => {
+      result.set(key, value);
     });
   }
+  return result;
 }

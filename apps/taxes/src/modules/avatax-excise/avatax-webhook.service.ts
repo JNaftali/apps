@@ -10,7 +10,7 @@ import { ClientLogger, createClientLogger } from "../logs/client-logger";
 import { AvataxOrderCancelledAdapter } from "./order-cancelled/avatax-order-cancelled-adapter";
 import { AvataxOrderConfirmedAdapter } from "./order-confirmed/avatax-order-confirmed-adapter";
 
-export class AvataxWebhookService implements ProviderWebhookService {
+export class AvataxExciseWebhookService implements ProviderWebhookService {
   private logger: Logger;
   private config: AvataxConfig;
   private clientLogger: ClientLogger;

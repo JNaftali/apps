@@ -3,12 +3,11 @@ import { OrderConfirmedSubscriptionFragment } from "../../../../generated/graphq
 import { discountUtils } from "../../taxes/discount-utils";
 import { avataxAddressFactory } from "../address-factory";
 import { AvataxCalculationDateResolver } from "../avatax-calculation-date-resolver";
-import { AvataxClient, CreateTransactionArgs } from "../avatax-client";
+import { AvataxExciseClient, CreateTransactionArgs } from "../avatax-client";
 import { AvataxConfig, defaultAvataxConfig } from "../avatax-connection-schema";
 import { AvataxCustomerCodeResolver } from "../avatax-customer-code-resolver";
 import { AvataxDocumentCodeResolver } from "../avatax-document-code-resolver";
 import { AvataxEntityTypeMatcher } from "../avatax-entity-type-matcher";
-import { AvataxTaxCodeMatches } from "../tax-code/avatax-tax-code-match-repository";
 import { AvataxOrderConfirmedPayloadLinesTransformer } from "./avatax-order-confirmed-payload-lines-transformer";
 
 export const SHIPPING_ITEM_CODE = "Shipping";
@@ -25,9 +24,8 @@ export class AvataxOrderConfirmedPayloadTransformer {
   async transform(
     order: OrderConfirmedSubscriptionFragment,
     avataxConfig: AvataxConfig,
-    matches: AvataxTaxCodeMatches,
   ): Promise<CreateTransactionArgs> {
-    const avataxClient = new AvataxClient(avataxConfig);
+    const avataxClient = new AvataxExciseClient(avataxConfig);
 
     const linesTransformer = new AvataxOrderConfirmedPayloadLinesTransformer();
     const entityTypeMatcher = new AvataxEntityTypeMatcher({ client: avataxClient });
@@ -53,14 +51,16 @@ export class AvataxOrderConfirmedPayloadTransformer {
         // * commit: If true, the transaction will be committed immediately after it is created. See: https://developer.avalara.com/communications/dev-guide_rest_v2/commit-uncommit
         commit: avataxConfig.isAutocommit,
         addresses: {
-          shipFrom: avataxAddressFactory.fromChannelAddress(avataxConfig.address),
+          shipFrom: avataxAddressFactory.fromSaleorAddress(
+            order.channel.warehouses.find((w) => w.address.isDefaultShippingAddress)?.address!,
+          ),
           // billing or shipping address?
           shipTo: avataxAddressFactory.fromSaleorAddress(order.billingAddress!),
         },
         currencyCode: order.total.currency,
         // we can fall back to empty string because email is not a required field
         email: order.user?.email ?? order.userEmail ?? "",
-        lines: linesTransformer.transform(order, avataxConfig, matches),
+        lines: linesTransformer.transform(order, avataxConfig),
         date,
         discount: discountUtils.sumDiscounts(
           order.discounts.map((discount) => discount.amount.amount),

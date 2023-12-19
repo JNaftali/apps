@@ -1,12 +1,14 @@
 import { Client } from "urql";
 import { createLogger, Logger } from "../../lib/logger";
 import { PublicAvataxConnectionService } from "../avatax/configuration/public-avatax-connection.service";
+import { PublicAvataxExciseConnectionService } from "../avatax-excise/configuration/public-avatax-connection.service";
 import { PublicTaxJarConnectionService } from "../taxjar/configuration/public-taxjar-connection.service";
 
 export const TAX_PROVIDER_KEY = "tax-providers-v2";
 
 export class PublicProviderConnectionsService {
   private avataxConnectionService: PublicAvataxConnectionService;
+  private avataxExciseConnectionService: PublicAvataxExciseConnectionService;
   private taxJarConnectionService: PublicTaxJarConnectionService;
   private logger: Logger;
   constructor({
@@ -19,6 +21,11 @@ export class PublicProviderConnectionsService {
     saleorApiUrl: string;
   }) {
     this.avataxConnectionService = new PublicAvataxConnectionService({
+      client,
+      appId,
+      saleorApiUrl,
+    });
+    this.avataxExciseConnectionService = new PublicAvataxExciseConnectionService({
       client,
       appId,
       saleorApiUrl,
@@ -37,7 +44,8 @@ export class PublicProviderConnectionsService {
   async getAll() {
     const taxJar = await this.taxJarConnectionService.getAll();
     const avatax = await this.avataxConnectionService.getAll();
+    const avataxExcise = await this.avataxExciseConnectionService.getAll();
 
-    return [...taxJar, ...avatax];
+    return [...taxJar, ...avatax, ...avataxExcise];
   }
 }

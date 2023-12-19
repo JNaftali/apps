@@ -1,4 +1,4 @@
-import { AvataxClient } from "./avatax-client";
+import { AvataxExciseClient } from "./avatax-client";
 import { AvataxEntityTypeMatcher } from "./avatax-entity-type-matcher";
 import { describe, expect, it, vi } from "vitest";
 
@@ -8,9 +8,9 @@ describe("AvataxEntityTypeMatcher", () => {
   it("returns empty string when no entity code", async () => {
     const mockAvataxClient = {
       getEntityUseCode: mockGetEntityUseCode.mockReturnValue(
-        Promise.resolve({ value: [{ code: "entityCode" }] })
+        Promise.resolve({ value: [{ code: "entityCode" }] }),
       ),
-    } as any as AvataxClient;
+    } as any as AvataxExciseClient;
 
     const matcher = new AvataxEntityTypeMatcher({ client: mockAvataxClient });
     const result = await matcher.match(null);
@@ -20,7 +20,7 @@ describe("AvataxEntityTypeMatcher", () => {
   it("returns empty string when entity code is present in metadata but not in avatax", async () => {
     const mockAvataxClient = {
       getEntityUseCode: mockGetEntityUseCode.mockReturnValue(Promise.resolve({})),
-    } as any as AvataxClient;
+    } as any as AvataxExciseClient;
 
     const matcher = new AvataxEntityTypeMatcher({ client: mockAvataxClient });
 
@@ -31,9 +31,9 @@ describe("AvataxEntityTypeMatcher", () => {
   it("returns entity code when entity code is present in metadata and in avatax", async () => {
     const mockAvataxClient = {
       getEntityUseCode: mockGetEntityUseCode.mockReturnValue(
-        Promise.resolve({ value: [{ code: "entityCode" }] })
+        Promise.resolve({ value: [{ code: "entityCode" }] }),
       ),
-    } as any as AvataxClient;
+    } as any as AvataxExciseClient;
 
     const matcher = new AvataxEntityTypeMatcher({ client: mockAvataxClient });
 

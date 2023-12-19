@@ -1,13 +1,5 @@
 import { z } from "zod";
 
-const addressSchema = z.object({
-  country: z.string(),
-  zip: z.string(),
-  state: z.string(),
-  city: z.string(),
-  street: z.string(),
-});
-
 const avataxCredentialsSchema = z.object({
   username: z.string().min(1, { message: "Username requires at least one character." }),
   password: z.string().min(1, { message: "Password requires at least one character." }),
@@ -28,7 +20,6 @@ export const avataxConfigSchema = z
     isAutocommit: z.boolean(),
     shippingTaxCode: z.string().optional(),
     isDocumentRecordingEnabled: z.boolean().default(true),
-    address: addressSchema,
   })
   .merge(baseAvataxConfigSchema);
 
@@ -44,13 +35,6 @@ export const defaultAvataxConfig: AvataxConfig = {
   credentials: {
     username: "",
     password: "",
-  },
-  address: {
-    city: "",
-    country: "",
-    state: "",
-    street: "",
-    zip: "",
   },
 };
 

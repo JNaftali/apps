@@ -17,11 +17,14 @@ const getSchema = avataxConnectionSchema.strict();
 export class AvataxConnectionRepository {
   private crudSettingsManager: CrudSettingsManager;
   private logger: Logger;
-  constructor(private settingsManager: EncryptedMetadataManager, private saleorApiUrl: string) {
+  constructor(
+    private settingsManager: EncryptedMetadataManager,
+    private saleorApiUrl: string,
+  ) {
     this.crudSettingsManager = new CrudSettingsManager(
       settingsManager,
       saleorApiUrl,
-      TAX_PROVIDER_KEY
+      TAX_PROVIDER_KEY,
     );
     this.logger = createLogger({
       name: "AvataxConnectionRepository",
@@ -31,7 +34,7 @@ export class AvataxConnectionRepository {
 
   private filterAvataxConnections(connections: ProviderConnections): AvataxConnection[] {
     return connections.filter(
-      (connection) => connection.provider === "avatax"
+      (connection) => connection.provider === "avataxExcise",
     ) as AvataxConnection[];
   }
 
@@ -55,7 +58,7 @@ export class AvataxConnectionRepository {
 
   async post(config: AvataxConfig): Promise<{ id: string }> {
     const result = await this.crudSettingsManager.create({
-      provider: "avatax",
+      provider: "avataxExcise",
       config: config,
     });
 

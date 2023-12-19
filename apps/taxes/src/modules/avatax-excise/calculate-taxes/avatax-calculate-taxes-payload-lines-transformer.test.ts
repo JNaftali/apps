@@ -10,9 +10,8 @@ describe("AvataxCalculateTaxesPayloadLinesTransformer", () => {
       const mockGenerator = new AvataxCalculateTaxesMockGenerator();
       const avataxConfigMock = mockGenerator.generateAvataxConfig();
       const taxBaseMock = mockGenerator.generateTaxBase();
-      const matchesMock = mockGenerator.generateTaxCodeMatches();
 
-      const lines = transformer.transform(taxBaseMock, avataxConfigMock, matchesMock);
+      const lines = transformer.transform(taxBaseMock, avataxConfigMock);
 
       expect(lines).toEqual([
         {
@@ -49,10 +48,9 @@ describe("AvataxCalculateTaxesPayloadLinesTransformer", () => {
     it("when no shipping in tax base, does not add shipping as line", () => {
       const mockGenerator = new AvataxCalculateTaxesMockGenerator();
       const avataxConfigMock = mockGenerator.generateAvataxConfig();
-      const matchesMock = mockGenerator.generateTaxCodeMatches();
       const taxBaseMock = mockGenerator.generateTaxBase({ shippingPrice: { amount: 0 } });
 
-      const lines = transformer.transform(taxBaseMock, avataxConfigMock, matchesMock);
+      const lines = transformer.transform(taxBaseMock, avataxConfigMock);
 
       expect(lines).toEqual([
         {
@@ -81,12 +79,11 @@ describe("AvataxCalculateTaxesPayloadLinesTransformer", () => {
     it("when discounts, sets discounted to true", () => {
       const mockGenerator = new AvataxCalculateTaxesMockGenerator();
       const avataxConfigMock = mockGenerator.generateAvataxConfig();
-      const matchesMock = mockGenerator.generateTaxCodeMatches();
       const taxBaseMock = mockGenerator.generateTaxBase({
         discounts: [{ amount: { amount: 10 } }],
       });
 
-      const lines = transformer.transform(taxBaseMock, avataxConfigMock, matchesMock);
+      const lines = transformer.transform(taxBaseMock, avataxConfigMock);
 
       expect(lines).toEqual([
         {

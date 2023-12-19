@@ -33,6 +33,12 @@ fragment OrderConfirmedSubscription on Order {
   channel {
     id
     slug
+    warehouses {
+      address {
+        isDefaultShippingAddress
+        ...Address
+      }
+    }
   }
   shippingAddress {
     ...Address

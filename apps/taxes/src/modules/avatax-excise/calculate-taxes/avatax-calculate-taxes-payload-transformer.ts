@@ -2,11 +2,10 @@ import { DocumentType } from "avatax/lib/enums/DocumentType";
 import { CalculateTaxesPayload } from "../../../pages/api/webhooks/checkout-calculate-taxes";
 import { discountUtils } from "../../taxes/discount-utils";
 import { avataxAddressFactory } from "../address-factory";
-import { AvataxClient, CreateTransactionArgs } from "../avatax-client";
+import { AvataxExciseClient, CreateTransactionArgs } from "../avatax-client";
 import { AvataxConfig, defaultAvataxConfig } from "../avatax-connection-schema";
 import { AvataxCustomerCodeResolver } from "../avatax-customer-code-resolver";
 import { AvataxEntityTypeMatcher } from "../avatax-entity-type-matcher";
-import { AvataxTaxCodeMatches } from "../tax-code/avatax-tax-code-match-repository";
 import { AvataxCalculateTaxesPayloadLinesTransformer } from "./avatax-calculate-taxes-payload-lines-transformer";
 
 export class AvataxCalculateTaxesPayloadTransformer {
@@ -23,10 +22,9 @@ export class AvataxCalculateTaxesPayloadTransformer {
   async transform(
     payload: CalculateTaxesPayload,
     avataxConfig: AvataxConfig,
-    matches: AvataxTaxCodeMatches,
   ): Promise<CreateTransactionArgs> {
     const payloadLinesTransformer = new AvataxCalculateTaxesPayloadLinesTransformer();
-    const avataxClient = new AvataxClient(avataxConfig);
+    const avataxClient = new AvataxExciseClient(avataxConfig);
     const entityTypeMatcher = new AvataxEntityTypeMatcher({ client: avataxClient });
     const customerCodeResolver = new AvataxCustomerCodeResolver();
 
@@ -45,11 +43,14 @@ export class AvataxCalculateTaxesPayloadTransformer {
         // * commit: If true, the transaction will be committed immediately after it is created. See: https://developer.avalara.com/communications/dev-guide_rest_v2/commit-uncommit
         commit: avataxConfig.isAutocommit,
         addresses: {
-          shipFrom: avataxAddressFactory.fromChannelAddress(avataxConfig.address),
+          shipFrom: avataxAddressFactory.fromSaleorAddress(
+            payload.taxBase.channel.warehouses.find((w) => w.address.isDefaultShippingAddress)
+              ?.address!,
+          ),
           shipTo: avataxAddressFactory.fromSaleorAddress(payload.taxBase.address!),
         },
         currencyCode: payload.taxBase.currency,
-        lines: payloadLinesTransformer.transform(payload.taxBase, avataxConfig, matches),
+        lines: payloadLinesTransformer.transform(payload.taxBase, avataxConfig),
         date: new Date(),
         discount: discountUtils.sumDiscounts(
           payload.taxBase.discounts.map((discount) => discount.amount.amount),

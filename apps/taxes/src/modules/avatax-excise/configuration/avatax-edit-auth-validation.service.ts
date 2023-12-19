@@ -3,7 +3,7 @@ import { createLogger, Logger } from "../../../lib/logger";
 import { AvataxConfig } from "../avatax-connection-schema";
 import { AvataxAuthValidationService } from "./avatax-auth-validation.service";
 import { AvataxPatchInputTransformer } from "./avatax-patch-input-transformer";
-import { AvataxClient } from "../avatax-client";
+import { AvataxExciseClient } from "../avatax-client";
 
 export class AvataxEditAuthValidationService {
   private logger: Logger;
@@ -35,7 +35,7 @@ export class AvataxEditAuthValidationService {
       saleorApiUrl: this.saleorApiUrl,
     });
     const credentials = await transformer.patchCredentials(id, input.credentials);
-    const avataxClient = new AvataxClient({ ...input, credentials });
+    const avataxClient = new AvataxExciseClient({ ...input, credentials });
 
     const authValidationService = new AvataxAuthValidationService(avataxClient);
 

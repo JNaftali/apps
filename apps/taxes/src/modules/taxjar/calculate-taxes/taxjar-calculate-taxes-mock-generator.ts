@@ -11,6 +11,21 @@ const taxIncludedTaxBase: TaxBase = {
   currency: "USD",
   channel: {
     slug: "default-channel",
+    warehouses: [
+      {
+        address: {
+          isDefaultShippingAddress: true,
+          streetAddress1: "668 Route Six",
+          streetAddress2: "",
+          city: "MAHOPAC",
+          countryArea: "NY",
+          postalCode: "10541",
+          country: {
+            code: "US",
+          },
+        },
+      },
+    ],
   },
   discounts: [],
   address: {
@@ -108,6 +123,21 @@ const taxExcludedTaxBase: TaxBase = {
   currency: "USD",
   channel: {
     slug: "default-channel",
+    warehouses: [
+      {
+        address: {
+          isDefaultShippingAddress: true,
+          streetAddress1: "668 Route Six",
+          streetAddress2: "",
+          city: "MAHOPAC",
+          countryArea: "NY",
+          postalCode: "10541",
+          country: {
+            code: "US",
+          },
+        },
+      },
+    ],
   },
   discounts: [],
   address: {

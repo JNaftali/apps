@@ -4,7 +4,7 @@ import { Logger, createLogger } from "../../../lib/logger";
 import { ClientLogger } from "../../logs/client-logger";
 import { CreateOrderResponse } from "../../taxes/tax-provider-webhook";
 import { WebhookAdapter } from "../../taxes/tax-webhook-adapter";
-import { AvataxClient } from "../avatax-client";
+import { AvataxExciseClient } from "../avatax-client";
 import { AvataxConfig } from "../avatax-connection-schema";
 import { normalizeAvaTaxError } from "../avatax-error-normalizer";
 import { AvataxOrderConfirmedPayloadService } from "./avatax-order-confirmed-payload.service";
@@ -46,7 +46,7 @@ export class AvataxOrderConfirmedAdapter
 
     this.logger.debug("Calling AvaTax createTransaction with transformed payload...");
 
-    const client = new AvataxClient(this.config);
+    const client = new AvataxExciseClient(this.config);
 
     try {
       const response = await client.createTransaction(target);

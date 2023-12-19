@@ -5,9 +5,9 @@ import { createSettingsManager } from "../../app/metadata-manager";
 import { AvataxConfig, AvataxConnection } from "../avatax-connection-schema";
 import { AvataxConnectionRepository } from "./avatax-connection-repository";
 import { AvataxAuthValidationService } from "./avatax-auth-validation.service";
-import { AvataxClient } from "../avatax-client";
+import { AvataxExciseClient } from "../avatax-client";
 
-export class AvataxConnectionService {
+export class AvataxExciseConnectionService {
   private logger: Logger;
   private avataxConnectionRepository: AvataxConnectionRepository;
 
@@ -30,7 +30,7 @@ export class AvataxConnectionService {
   }
 
   private async checkIfAuthorized(input: AvataxConfig) {
-    const avataxClient = new AvataxClient(input);
+    const avataxClient = new AvataxExciseClient(input);
     const authValidationService = new AvataxAuthValidationService(avataxClient);
 
     await authValidationService.validate();
@@ -63,10 +63,6 @@ export class AvataxConnectionService {
       credentials: {
         ...prevConfig.credentials,
         ...nextConfigPartial.credentials,
-      },
-      address: {
-        ...prevConfig.address,
-        ...nextConfigPartial.address,
       },
     };
 
