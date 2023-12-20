@@ -11,6 +11,7 @@ import { AvataxCalculateTaxesPayloadService } from "./avatax-calculate-taxes-pay
 import { AvataxCalculateTaxesResponseTransformer } from "./avatax-calculate-taxes-response-transformer";
 
 export const SHIPPING_ITEM_CODE = "Shipping";
+export const SHIPPING_UNIT_OF_MEASURE = "EA";
 
 export type AvataxCalculateTaxesTarget = CreateTransactionArgs;
 export type AvataxCalculateTaxesResponse = CalculateTaxesResponse;

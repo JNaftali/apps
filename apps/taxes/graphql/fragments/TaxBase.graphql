@@ -1,28 +1,38 @@
+fragment TaxBaseLineVariant on ProductVariant {
+  id
+  product {
+    taxClass {
+      id
+      name
+    }
+  }
+  sku
+  ateUnitQuantity: privateMetafield(key: "mirumee.taxes.avalara_excise:UnitQuantity")
+  ateUnitOfMeasure: privateMetafield(key: "mirumee.taxes.avalara_excise:UnitOfMeasure")
+  ateUnitQuantityUnitOfMeasure: privateMetafield(
+    key: "mirumee.taxes.avalara_excise:UnitQuantityUnitOfMeasure"
+  )
+  ateCustomString1: privateMetafield(key: "mirumee.taxes.avalara_excise:CustomString1")
+  ateCustomString2: privateMetafield(key: "mirumee.taxes.avalara_excise:CustomString2")
+  ateCustomString3: privateMetafield(key: "mirumee.taxes.avalara_excise:CustomString3")
+  ateCustomNumeric1: privateMetafield(key: "mirumee.taxes.avalara_excise:CustomNumeric1")
+  ateCustomNumeric2: privateMetafield(key: "mirumee.taxes.avalara_excise:CustomNumeric2")
+  ateCustomNumeric3: privateMetafield(key: "mirumee.taxes.avalara_excise:CustomNumeric3")
+}
+
 fragment TaxBaseLine on TaxableObjectLine {
   sourceLine {
     __typename
     ... on CheckoutLine {
       id
       checkoutProductVariant: variant {
-        id
-        product {
-          taxClass {
-            id
-            name
-          }
-        }
+        ...TaxBaseLineVariant
       }
     }
     ... on OrderLine {
       id
       orderProductVariant: variant {
-        id
-        product {
-          taxClass {
-            id
-            name
-          }
-        }
+        ...TaxBaseLineVariant
       }
     }
   }
@@ -78,6 +88,7 @@ fragment TaxBase on TaxableObject {
       user {
         id
       }
+      number
     }
   }
 }

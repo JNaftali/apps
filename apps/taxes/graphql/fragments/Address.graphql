@@ -2,6 +2,7 @@ fragment Address on Address {
   streetAddress1
   streetAddress2
   city
+  cityArea
   countryArea
   postalCode
   country {
