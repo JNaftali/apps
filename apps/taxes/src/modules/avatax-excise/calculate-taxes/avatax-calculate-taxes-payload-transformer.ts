@@ -27,6 +27,11 @@ export class AvataxCalculateTaxesPayloadTransformer {
     const today = new Date().toString();
 
     return {
+      // User provided id guaranteed to be unique to the transaction - pass in nothing for a checkout so the id doesn't shift when the order is committed
+      UserTranId:
+        payload.taxBase.sourceObject.__typename === "Order"
+          ? payload.taxBase.sourceObject.number
+          : undefined,
       EffectiveDate: today,
       InvoiceDate: today,
       InvoiceNumber:
